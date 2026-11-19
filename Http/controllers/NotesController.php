@@ -12,7 +12,7 @@ class NotesController
     {
         $db = App::resolve(Database::class);
 
-        $currentUserId = 1;
+        $currentUserId = $this->currentUserId();
 
         $note = $db->query('select * from notes where id = :id', [
             'id' => $_POST['id']
@@ -29,7 +29,7 @@ class NotesController
     {
         $db = App::resolve(Database::class);
 
-        $currentUserId = 1;
+        $currentUserId = $this->currentUserId();
 
         $note = $db->query('select * from notes where id = :id', [
             'id' => $_GET['id']
@@ -52,7 +52,7 @@ class NotesController
     {
         $db = App::resolve(Database::class);
 
-        $currentUserId = 1;
+        $currentUserId = $this->currentUserId();
 
         $note = $db->query('select * from notes where id = :id', [
             'id' => $_GET['id']
@@ -83,13 +83,17 @@ class NotesController
             'body' => $_POST['body'],
             'user_id' => 1
         ]);
+
+        return header('location: /notes');
     }
 
     function update()
     {
         $db = App::resolve(Database::class);
 
-        $currentUserId = 1;
+        //dd($_SESSION);
+
+        $currentUserId = $this->currentUserId();
 
         $note = $db->query('select * from notes where id = :id', [
             'id' => $_POST['id']
@@ -115,5 +119,16 @@ class NotesController
             'id' => $_POST['id'],
             'body' => $_POST['body']
         ]);
+    }
+
+    function currentUserId()
+    {
+        $db = App::resolve(Database::class);
+
+        $id = $db-> query('select id from users where email = :email', [
+            'email' => $_SESSION['user']['email']
+        ]);
+
+        return $id;
     }
 }
