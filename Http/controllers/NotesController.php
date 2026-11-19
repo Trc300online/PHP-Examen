@@ -43,7 +43,10 @@ class NotesController
     function index()
     {
         $db = App::resolve(Database::class);
-        $notes = $db->query('select * from notes where user_id = 1')->get();
+
+        $notes = $db->query('select * from notes where user_id = :currentUserId', [
+            'currentUserId' => $this->currentUserId()
+        ])->get();
 
         return $notes;
     }
@@ -125,10 +128,8 @@ class NotesController
     {
         $db = App::resolve(Database::class);
 
-        $id = $db-> query('select id from users where email = :email', [
+        return $db-> query('select id from users where email = :email', [
             'email' => $_SESSION['user']['email']
         ]);
-
-        return $id;
     }
 }
