@@ -1,6 +1,6 @@
 <?php
 
-namespace Http\controllers;
+namespace Http\controllers\notes;
 
 use Core\App;
 use Core\Database;
@@ -23,6 +23,9 @@ class NotesController
         $db->query('delete from notes where id = :id', [
             'id' => $_POST['id']
         ]);
+
+        header('location: /notes');
+        exit();
     }
 
     function edit()
@@ -37,7 +40,11 @@ class NotesController
 
         authorize($note['user_id'] === $currentUserId);
 
-        return $note;
+        view("notes/edit.view.php", [
+            'heading' => 'Edit Note',
+            'errors' => [],
+            'note' => $note
+        ]);
     }
 
     function index()
@@ -48,7 +55,10 @@ class NotesController
             'currentUserId' => $this->currentUserId()
         ])->get();
 
-        return $notes;
+        view("notes/index.view.php", [
+            'heading' => 'My Notes',
+            'notes' => $notes
+        ]);
     }
 
     function show()
@@ -63,7 +73,10 @@ class NotesController
 
         authorize($note['user_id'] === $currentUserId);
 
-        return $note;
+        view("notes/show.view.php", [
+            'heading' => 'Note',
+            'note' => $note
+        ]);
     }
 
     function store()
@@ -87,7 +100,8 @@ class NotesController
             'user_id' => 1
         ]);
 
-        return header('location: /notes');
+        header('location: /notes');
+        die();
     }
 
     function update()
@@ -122,13 +136,24 @@ class NotesController
             'id' => $_POST['id'],
             'body' => $_POST['body']
         ]);
+
+        header('location: /notes');
+        die();
+    }
+
+    function create()
+    {
+        view("notes/create.view.php", [
+            'heading' => 'Create Note',
+            'errors' => []
+        ]);
     }
 
     function currentUserId()
     {
         $db = App::resolve(Database::class);
 
-        return $db-> query('select id from users where email = :email', [
+        return $db->query('select id from users where email = :email', [
             'email' => $_SESSION['user']['email']
         ]);
     }
