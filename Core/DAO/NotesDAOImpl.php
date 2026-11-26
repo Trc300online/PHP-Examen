@@ -56,4 +56,14 @@ class NotesDAOImpl implements NotesDAO
             ['id' => $id]
         );
     }
+
+    public function getUserIdByEmail($email)
+    {
+        $user = $this->db->query(
+            'SELECT id FROM users WHERE email = :email',
+            ["email" => $email]
+        )-> find();
+
+        return $user ? (int) $user["id"] : null;
+    }
 }
